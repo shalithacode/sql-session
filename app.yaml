@@ -1,8 +1,5 @@
 runtime: python39
 
-env_variables:
-  CLOUD_SQL_USERNAME: root
-  CLOUD_SQL_PASSWORD: toor
-  CLOUD_SQL_DATABASE_NAME: my-db
-  CLOUD_SQL_CONNECTION_NAME: shalitha98:us-central1:cloud-workshop-sql
-# [END gae_python37_cloudsql_config]
+handlers: # static then dynamic
+  - url: /ssl
+    static_dir: ssl

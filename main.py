@@ -1,42 +1,52 @@
-import os
+from flask import Flask, render_template,request,redirect
+import mysql.connector
+from mysql.connector.constants import ClientFlag
 
-from flask import Flask
-import pymysql
-
-db_user = os.environ.get('CLOUD_SQL_USERNAME')
-db_password = os.environ.get('CLOUD_SQL_PASSWORD')
-db_name = os.environ.get('CLOUD_SQL_DATABASE_NAME')
-db_connection_name = os.environ.get('CLOUD_SQL_CONNECTION_NAME')
-
+config = {
+    'user': 'root',
+    'password': 'toor',
+    'host': '34.68.237.227',
+    'database': 'my-db' ,
+    'client_flags': [ClientFlag.SSL],
+    'ssl_ca': 'ssl/server-ca.pem',
+    'ssl_cert': 'ssl/client-cert.pem',
+    'ssl_key': 'ssl/client-key.pem'
+}
 app = Flask(__name__)
 
-
-@app.route('/')
+@app.route('/',methods =['GET','POST'])
 def main():
-    # When deployed to App Engine, the `GAE_ENV` environment variable will be
-    # set to `standard`
-    if os.environ.get('GAE_ENV') == 'standard':
-        # If deployed, use the local socket interface for accessing Cloud SQL
-        unix_socket = '/cloudsql/{}'.format(db_connection_name)
-        cnx = pymysql.connect(user=db_user, password=db_password,
-                              unix_socket=unix_socket, db=db_name)
-    else:
-        # If running locally, use the TCP connections instead
-        # Set up Cloud SQL Proxy (cloud.google.com/sql/docs/mysql/sql-proxy)
-        # so that your application can use 127.0.0.1:3306 to connect to your
-        # Cloud SQL instance
-        host = '127.0.0.1'
-        cnx = pymysql.connect(user=db_user, password=db_password,
-                              host=host, db=db_name)
 
+    cnx = mysql.connector.connect(**config)
+    if request.method == 'POST':
+        
+        query = (f'insert into country_tbl(name,currency,population,gdp) values("{request.form["name"]}","{request.form["currency"]}", "{request.form["population"]}","{request.form["gdp"]}");')
+        with cnx.cursor() as cursor:
+            cursor.execute(query)
+        cnx.commit()
+    
+    result =[]
     with cnx.cursor() as cursor:
-        cursor.execute('select demo_txt from demo_tbl;')
+        cursor.execute('select * from country_tbl;')
         result = cursor.fetchall()
-        current_msg = result[0][0]
+        print(len(result))
     cnx.close()
 
-    return str(current_msg)
-# [END gae_python37_cloudsql_mysql]
+    return render_template('index.html', data = result)
+
+
+@app.route('/delete',methods =['POST'])
+def delete_country():
+
+    cnx = mysql.connector.connect(**config)
+    if request.method == 'POST':
+        query = (f'DELETE FROM country_tbl WHERE c_id={request.form["custId"]};')
+        print(query)
+        with cnx.cursor() as cursor:
+            cursor.execute(query)
+        cnx.commit()
+    cnx.close()
+    return redirect('/')
 
 
 if __name__ == "__main__":
