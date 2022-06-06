@@ -6,7 +6,7 @@
 
 body {
   align-items: center;
-  background-color: rgb(19, 19, 19);
+  background-color: #1d272f;
   height: 100vh;
   font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -24,6 +24,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 50px;
+  box-shadow: rgba(3, 4, 5, 0.4) 2px 12px 30px;
 }
 
 .title {
@@ -139,7 +140,7 @@ body {
   border-radius: 20px;
   margin: 10px 70px 70px 50px;
 
-  box-shadow: 0px 35px 50px rgba(255, 255, 255, 0.315);
+  box-shadow: rgba(15, 23, 27, 0.658) 2px 12px 30px;
 }
 
 .fl-table {
