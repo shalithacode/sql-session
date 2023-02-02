@@ -1,4 +1,5 @@
 from flask import Flask, render_template,request,redirect
+#Crate DB connection
 import mysql.connector
 from mysql.connector.constants import ClientFlag
 
